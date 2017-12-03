@@ -6,3 +6,9 @@ Manual:
 - copy output/nl to /usr/share/freeswitch/sounds
 -
 
+Dependancies:
+- ffmpeg
+- sox
+- python-csv
+- python-os
+- python-urllib
