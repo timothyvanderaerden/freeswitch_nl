@@ -15,7 +15,7 @@ language=['nl','nl']
 #Free API key. May change in the future. Please check website Natural Readers
 apikey='b98x9xlfs54ws4k0wc0o8g4gwc0w8ss'
 
-get_params={'apikey': apikey, 'src': 'pw', 'r':voice['id'], 's':speed, 't':''}
+get_params={'apikey': apikey, 'src': 'pw', 'r':voices[0]['id'], 's':speed, 't':''}
 with open('freeswitch_nl_translations.csv', 'rb') as csvfile:
   csvreader = csv.reader(csvfile, delimiter=';', quotechar='"')
   for row in csvreader:
