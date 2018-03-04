@@ -46,6 +46,6 @@ with open('freeswitch_nl_translations.csv', 'rb') as csvfile:
             #print 'Creating folder %s'%(targetdir2)
             os.makedirs(targetdir2)
           #print 'Converting %s/%s to %s/%s'%(targetdir,targetfile,targetdir2,targetfile)
-          os.system( 'sox %s/%s -r 8k -c 1 -s %s/%s'%(targetdir,targetfile,targetdir2,targetfile) )
+          os.system( 'sox %s/%s -r 8k -c 1 -e signed-integer %s/%s'%(targetdir,targetfile,targetdir2,targetfile) )
 
         #print
