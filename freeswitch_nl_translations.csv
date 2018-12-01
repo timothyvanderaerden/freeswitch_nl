@@ -460,6 +460,16 @@
 /digits;pound.wav;hekje;
 /digits;star.wav;sterretje;asterisk
 /digits;thousand.wav;duizend;
+/digits;1-en.wav;1-en;
+/digits;2-en.wav;2-en;
+/digits;3-en.wav;3-en;
+/digits;4-en.wav;4-en;
+/digits;5-en.wav;5-en;
+/digits;6-en.wav;6-en;
+/digits;7-en.wav;7-en;
+/digits;8-en.wav;8-en;
+/digits;9-en.wav;9-en;
+/time;om.wav;om;
 /currency;and.wav;en;
 /currency;central.wav;centraal;
 /currency;cents-per-minute.wav;cent per minuut;
