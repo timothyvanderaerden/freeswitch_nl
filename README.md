@@ -13,3 +13,7 @@ Dependancies:
 - python-csv
 - python-os
 - python-urllib
+
+Contributors:
+- Hsing-Foo Wang <hsingfoo@gmail.com>
+- Jeroen Hermans <github@epsys.nl>
