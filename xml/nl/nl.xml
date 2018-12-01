@@ -1,5 +1,5 @@
 <include>
-  <language name="nl" say-module="nl" sound-prefix="$${sounds_dir}/nl/nl/Anika">   <!-- JH: TODO: tts-engine for Dutch??? -->
+  <language name="nl" say-module="nl" sound-prefix="$${sounds_dir}/nl/nl/anika">   <!-- JH: TODO: tts-engine for Dutch??? -->
     <phrases>
       <macros>
         <X-PRE-PROCESS cmd="include" data="vm/sounds.xml"/>
