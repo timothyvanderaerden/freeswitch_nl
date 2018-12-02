@@ -43,6 +43,7 @@ def http_request(url=None, data=None, headers=None):
   except IOError, e:
     print 'Failed to open "%s".' % url
     if hasattr(e, 'code'):
+      import json
       print 'We failed with error code - %s.' % e.code
       print json.load(e)
     elif hasattr(e, 'reason'):
@@ -77,7 +78,7 @@ headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/2010010
 
 
 #There are two Dutch voices
-voices=[{'id':21,'name': 'Anika'},{'id':22,'name': 'Markus'}]
+voices=[{'id':21,'name': 'anika'},{'id':22,'name': 'markus'}]
 
 #Talking speed for Natural Readers
 speed=0
@@ -99,7 +100,7 @@ with open('freeswitch_nl_translations.csv', 'rb') as csvfile:
         get_params['t'] = row[2]
         url = 'https://kfiuqykx63.execute-api.us-east-1.amazonaws.com/Dev/tts?%s'%(urllib.urlencode(get_params))
 
-        targetdir  = 'naturalreaders/%s/%s'%(voice['name'].lower(), row[0][1:] if row[0][0]=='/' else row[0])
+        targetdir  = 'naturalreaders/%s/%s'%(voice['name'], row[0][1:] if row[0][0]=='/' else row[0])
 
         if row[1][-4:] == '.wav':
           targetfile = '%s.mp3'%(row[1][0:-4])
@@ -127,7 +128,7 @@ with open('freeswitch_nl_translations.csv', 'rb') as csvfile:
         os.system( 'ffmpeg -v 0 -y -i %s/%s %s/%s'%(targetdir,targetfile,targetdir,wavfile) )
 
         for samplerate in [8000,16000,32000,48000]:
-          targetdir2  = 'output/%s/%s/%s/%s/%d'%(language[0],language[1],voice['name'].lower(), row[0][1:] if row[0][0]=='/' else row[0], samplerate)
+          targetdir2  = 'output/%s/%s/%s/%s/%d'%(language[0],language[1],voice['name'], row[0][1:] if row[0][0]=='/' else row[0], samplerate)
           try:
             os.stat(targetdir2)
           except:
