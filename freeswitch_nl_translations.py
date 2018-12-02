@@ -90,6 +90,8 @@ apikey='b98x9xlfs54ws4k0wc0o8g4gwc0w8ss'
 import requests
 headers = {'User-Agent': 'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0', 'Origin': 'https://www.naturalreaders.com', 'Accept-Encoding': 'gzip, deflate, br', 'Accept': '*/*' }
 
+data = raw_input("Download existing audiofiles again?")
+
 get_params={'l': '0', 'v': 'mac', 'r':voices[0]['id'], 's':speed, 't':''}
 with open('freeswitch_nl_translations.csv', 'rb') as csvfile:
   csvreader = csv.reader(csvfile, delimiter=';', quotechar='"')
@@ -114,14 +116,23 @@ with open('freeswitch_nl_translations.csv', 'rb') as csvfile:
           os.makedirs(targetdir)
 
         print 'Processing %s/%s'%(targetdir,targetfile)
-        #print 'Downloading %s'%(url)
-        postdata = '{"t": "%s" }'%(row[2])
 
-        response = http_request(url=url, data=postdata, headers=headers)
-        content = get_content(response)
-        output_file = open("%s/%s"%(targetdir,targetfile),"wb")
-        output_file.write(content)
-        output_file.close()
+        import os.path
+        file_exists = os.path.isfile("%s/%s"%(targetdir,targetfile) )
+
+        if (file_exists and data == 'y') or not file_exists:
+          #print 'Downloading %s'%(url)
+          postdata = '{"t": "%s" }'%(row[2])
+
+          import time
+          response = None
+          while response is None:
+            response = http_request(url=url, data=postdata, headers=headers)
+            if response is None: time.sleep(10)
+          content = get_content(response)
+          output_file = open("%s/%s"%(targetdir,targetfile),"wb")
+          output_file.write(content)
+          output_file.close()
 
         wavfile = "%s.wav"%(targetfile[:-4])
         #print 'Converting %s/%s to %s/%s'%(targetdir,targetfile,targetdir,wavfile)
