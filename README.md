@@ -7,7 +7,7 @@ Manual:
 - copy output/nl to /usr/share/freeswitch/sounds
 - copy xml/nl to /etc/freeswitch/lang
 
-Dependancies:
+Dependencies:
 - ffmpeg
 - sox
 - python-csv
