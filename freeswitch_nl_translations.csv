@@ -71,7 +71,7 @@
 /voicemail;vm-emailed.wav;Gemailed;Per email verzonden
 /voicemail;vm-enter_id.wav;Toets uw I D in gevolgd door;
 /voicemail;vm-enter_new_pin.wav;Toets uw nieuwe wachtwoord in, gevolgd door het hekje;
-/voicemail;vm-enter_pass.wav;Toets uw wachtwoord in;
+/voicemail;vm-enter_pass.wav;Toets uw wachtwoord in, gevolgd door het hekje;
 /voicemail;vm-fail_auth.wav;Ongeldige inloggegevens;
 /voicemail;vm-followed_by_pound.wav;gevolgd door het hekje;
 /voicemail;vm-followed_by.wav;gevolgd door;
@@ -414,7 +414,7 @@
 /digits;17.wav;zeventien;
 /digits;18.wav;achttien;
 /digits;19.wav;negentien;
-/digits;1.wav;een;
+/digits;1.wav;één;
 /digits;20.wav;twintig;
 /digits;2.wav;twee;
 /digits;30.wav;dertig;
