@@ -68,7 +68,7 @@
 /voicemail;vm-deleted.wav;verwijderd;
 /voicemail;vm-delete_message.wav;Om dit bericht te verwijderen;
 /voicemail;vm-delete_recording.wav;Om de opname te verwijderen;
-/voicemail;vm-emailed.wav;Gemailed;Per email verzonden
+/voicemail;vm-emailed.wav;Gemailed;Per email verzonden;
 /voicemail;vm-enter_id.wav;Toets uw I D in gevolgd door;
 /voicemail;vm-enter_new_pin.wav;Toets uw nieuwe wachtwoord in, gevolgd door het hekje;
 /voicemail;vm-enter_pass.wav;Toets uw wachtwoord in, gevolgd door het hekje;
