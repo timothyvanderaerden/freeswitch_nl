@@ -31,6 +31,7 @@ def http_request(url=None, data=None, headers=None):
         req.unredirected_hdrs["Content-type"] = headers['Content-Type']
         return req
 
+  #opener = urllib2.build_opener(urllib2.HTTPSHandler(context=ctx, debuglevel=1), urllib2.HTTPCookieProcessor(cj))
   opener = urllib2.build_opener(urllib2.HTTPSHandler(context=ctx), urllib2.HTTPCookieProcessor(cj))
   if 'Content-Type' in headers:
     opener.add_handler(ChangeTypeProcessor())
@@ -65,11 +66,12 @@ def get_content(response=None):
   else:
     return response.read()
 
-headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0',
+headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0',
         'Accept': '*/*',
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'en-US,en;q=0.5',
-        'Origin': 'https://www.naturalreaders.com',
+        'Referer': 'https://www.naturalreaders.com/',
+        'origin': 'https://www.naturalreaders.com',
         'Content-Type': 'application/x-www-form-urlencoded',
         'Connection': 'keep-alive',
         'Pragma': 'no-cache',
@@ -84,23 +86,27 @@ voices=[{'id':21,'name': 'anika'},{'id':22,'name': 'markus'}]
 speed=0
 #folder names for freeswitch (language, dialect)
 language=['nl','nl']
-#Free API key. May change in the future. Please check website Natural Readers
-apikey='b98x9xlfs54ws4k0wc0o8g4gwc0w8ss'
 
 import requests
-headers = {'User-Agent': 'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0', 'Origin': 'https://www.naturalreaders.com', 'Accept-Encoding': 'gzip, deflate, br', 'Accept': '*/*' }
+#headers = {'User-Agent': 'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0', 'Origin': 'https://www.naturalreaders.com', 'Accept-Encoding': 'gzip, deflate, br', 'Accept': '*/*' }
 
 data = raw_input("Download existing audiofiles again?")
 
-get_params={'l': '0', 'v': 'mac', 'r':voices[0]['id'], 's':speed, 't':''}
+
+url1     = 'https://www.naturalreaders.com/online/'
+response = http_request(url=url1, headers=headers)
+
+
+get_params={'e': 'user@naturalreaders.com', 'l': '0', 'v': 'mac', 'r':voices[0]['id'], 's':speed}
 with open('freeswitch_nl_translations.csv', 'rb') as csvfile:
   csvreader = csv.reader(csvfile, delimiter=';', quotechar='"')
   for row in csvreader:
     if row[2] != '':
       for voice in voices:
         #print row[2]
-        get_params['t'] = row[2]
-        url = 'https://kfiuqykx63.execute-api.us-east-1.amazonaws.com/Dev/tts?%s'%(urllib.urlencode(get_params))
+        #get_params['t'] = row[2]
+        url = 'https://pw.naturalreaders.com/tts?%s'%(urllib.urlencode(get_params))
+        url = 'https://pw.naturalreaders.com/tts?e=user@naturalreaders.com&l=0&s=0&r=21&v=mac'
 
         targetdir  = 'naturalreaders/%s/%s'%(voice['name'], row[0][1:] if row[0][0]=='/' else row[0])
 
