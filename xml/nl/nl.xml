@@ -1,23 +1,14 @@
 <include>
-  <language name="nl" say-module="nl" sound-prefix="$${sounds_dir}/nl/nl/anika">   <!-- JH: TODO: tts-engine for Dutch??? -->
-    <phrases>
-      <macros>
-        <X-PRE-PROCESS cmd="include" data="vm/sounds.xml"/>
-        <X-PRE-PROCESS cmd="include" data="dir/sounds.xml"/>
-        <X-PRE-PROCESS cmd="include" data="ivr/*.xml"/>  <!-- IVR and custom phrases go here -->
-      </macros>
-      <X-PRE-PROCESS cmd="include" data="vm/voicemail_ivr.xml"/>
-    </phrases>
-  </language>
+	<language name="nl" say-module="nl" sound-prefix="$${sounds_dir}/nl/nl/nl-NL-Wavenet-E" tts-engine="cepstral" tts-voice="callie">
+		<phrases>
+			<macros>
+				<X-PRE-PROCESS cmd="include" data="demo/*.xml"/> <!-- Note: this now grabs whole subdir, previously grabbed only demo.xml -->
+				<!--voicemail_en_tts is purely implemented with tts, we have the files based one that is the default. -->
+				<X-PRE-PROCESS cmd="include" data="vm/*.xml"/>  <!-- vm/tts.xml if you want to use tts and have cepstral -->
+				<X-PRE-PROCESS cmd="include" data="dir/sounds.xml"/>  <!-- dir/tts.xml if you want to use tts and have cepstral -->
+				<X-PRE-PROCESS cmd="include" data="ivr/*.xml"/>  <!-- IVR and custom phrases go here -->
+				<X-PRE-PROCESS cmd="include" data="vm/voicemail_ivr.xml"/>
+			</macros>
+		</phrases>
+	</language>
 </include>
-<!--
-For Emacs:
-Local Variables:
-mode:xml
-indent-tabs-mode:nil
-tab-width:2
-c-basic-offset:2
-End:
-For VIM:
-vim:set softtabstop=2 shiftwidth=2 tabstop=2 expandtab:
--->

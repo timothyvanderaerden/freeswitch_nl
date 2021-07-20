@@ -13,7 +13,7 @@
     <input pattern="(.*)">
       <match>
         <action function="play-file" data="voicemail/vm-enter_pass.wav"/>
-        <!-- <action function="say" data="$1" method="pronounced" type="name_spelled"/> //-->
+        <action function="say" data="$1" method="pronounced" type="name_spelled"/>
       </match>
     </input>
   </macro>
@@ -29,7 +29,7 @@
   <macro name="voicemail_change_pass_success">
     <input pattern="(.*)">
       <match>
-        <action function="play-file" data="voicemail/vm-password_has_been_changed.wav"/>
+        <action function="play-file" data="ivr/ivr-Thank_you.wav"/>
       </match>
     </input>
   </macro>
@@ -37,7 +37,7 @@
   <macro name="voicemail_change_pass_fail">
     <input pattern="(.*)">
       <match>
-        <action function="play-file" data="voicemail/vm-password_not_valid.wav"/>
+        <action function="play-file" data="voicemail/vm-fail_auth.wav"/>
       </match>
     </input>
   </macro>
@@ -160,15 +160,15 @@
   <macro name="voicemail_record_file_check">
     <input pattern="^([0-9#*]):([0-9#*]):([0-9#*])$">
       <match>
-        <action function="play-file" data="voicemail/vm-listen_to_recording.wav"/>
         <action function="play-file" data="voicemail/vm-press.wav"/>
         <action function="say" data="$1" method="pronounced" type="name_spelled"/>
-        <action function="play-file" data="voicemail/vm-save_recording.wav"/>
+        <action function="play-file" data="voicemail/vm-listen_to_recording.wav"/>
         <action function="play-file" data="voicemail/vm-press.wav"/>
         <action function="say" data="$2" method="pronounced" type="name_spelled"/>
-        <action function="play-file" data="voicemail/vm-rerecord.wav"/>
+        <action function="play-file" data="voicemail/vm-save_recording.wav"/>
         <action function="play-file" data="voicemail/vm-press.wav"/>
         <action function="say" data="$3" method="pronounced" type="name_spelled"/>
+        <action function="play-file" data="voicemail/vm-rerecord.wav"/>
       </match>
     </input>
   </macro>
@@ -334,15 +334,12 @@
   <macro name="voicemail_say_phone_number">
     <input pattern="^000|^$|^[Aa]non|^[Pp]rivate" break_on_match="true">
       <match>
-        <action function="play-file" data="voicemail/vm-message_from.wav"/>
-        <action function="execute" data="sleep(100)"/>
-        <action function="play-file" data="ivr/ivr-anonymous_caller.wav"/>
-        <action function="execute" data="sleep(500)"/>
+        <!-- add 'anonymous caller' sound here -->
       </match>
     </input>
     <input pattern="^(.*)$">
       <match>
-        <action function="play-file" data="voicemail/vm-message_from.wav"/>
+        <action function="play-file" data="ivr/ivr-this_is_a_call_from.wav"/>
         <action function="execute" data="sleep(100)"/>
         <action function="say" data="$1" method="pronounced" type="name_spelled"/>
         <action function="execute" data="sleep(500)"/>
@@ -431,14 +428,3 @@
   </macro>
 
 </include>
-<!--
-For Emacs:
-Local Variables:
-mode:xml
-indent-tabs-mode:nil
-tab-width:2
-c-basic-offset:2
-End:
-For VIM:
-vim:set softtabstop=2 shiftwidth=2 tabstop=2 expandtab:
--->
