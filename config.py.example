@@ -12,6 +12,6 @@ config = {'googleAPIkey':     'xyzabc123',
 
 languages = {
               'nl-nl': {'name': 'nl-NL-Wavenet-E', 'languageCode': 'nl-NL'},
-              'de-de': {'name': '', 'languageCode': ''},
-              'pt-pt': {'name': '', 'languageCode': ''}
+              'de-de': {'name': 'de-DE-Wavenet-F', 'languageCode': 'de-DE'},
+              'pt-pt': {'name': 'pt-PT-Wavenet-D', 'languageCode': 'pt-PT'}
             }
