@@ -6,7 +6,7 @@ The csv file contains all prossible translations and the python script generates
 
 Manual:
 - Run python script freeswitch_nl_translation.py
-- Add to /etc/freeswitch/freeswitch.xml:     &lt;X-PRE-PROCESS cmd="include" data="lang/nl/*.xml"/&gt;
+- Add to /etc/freeswitch/freeswitch.xml:     &lt;X-PRE-PROCESS cmd="include" data="languages/nl/*.xml"/&gt;
 - copy output/nl to /usr/share/freeswitch/sounds
 - copy xml/nl to /etc/freeswitch/languages
 
