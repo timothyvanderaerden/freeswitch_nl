@@ -1,157 +1,121 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import csv
 import os
-import cookielib
-import urllib
-
-cj = cookielib.LWPCookieJar()
-
-def http_request(url=None, data=None, headers=None):
-  if url==None:
-    return None
-
-  import urllib
-  import urllib2
-  global cj
-
-  if True:
-    import ssl
-    ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
-
-  if 'Content-Type' in headers:
-    class ChangeTypeProcessor(urllib2.BaseHandler):
-      def http_request(self, req):
-        req.unredirected_hdrs["Content-type"] = headers['Content-Type']
-        return req
-      def https_request(self, req):
-        req.unredirected_hdrs["Content-type"] = headers['Content-Type']
-        return req
-
-  #opener = urllib2.build_opener(urllib2.HTTPSHandler(context=ctx, debuglevel=1), urllib2.HTTPCookieProcessor(cj))
-  opener = urllib2.build_opener(urllib2.HTTPSHandler(context=ctx), urllib2.HTTPCookieProcessor(cj))
-  if 'Content-Type' in headers:
-    opener.add_handler(ChangeTypeProcessor())
-  req = urllib2.Request(url, data=data,
-        headers=headers)
-
-  try:
-    response = opener.open(req)
-    return response
-  except IOError, e:
-    print 'Failed to open "%s".' % url
-    if hasattr(e, 'code'):
-      import json
-      print 'We failed with error code - %s.' % e.code
-      print json.load(e)
-    elif hasattr(e, 'reason'):
-      print "The error object has the following 'reason' attribute :"
-      print e.reason
-
-  return None
-
-
-def get_content(response=None):
-  if response == None:
-    return None
-
-  if response.info().get('Content-Encoding') == 'gzip':
-    import gzip
-    from StringIO import StringIO
-    compressedstream = StringIO(response.read())
-    return gzip.GzipFile(fileobj=compressedstream).read()
-  else:
-    return response.read()
-
-headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0',
-        'Accept': '*/*',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Referer': 'https://www.naturalreaders.com/',
-        'origin': 'https://www.naturalreaders.com',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Connection': 'keep-alive',
-        'Pragma': 'no-cache',
-        'Cache-Control': 'no-cache'}
-
-
-
-#There are two Dutch voices
-voices=[{'id':21,'name': 'anika'},{'id':22,'name': 'markus'}]
-
-#Talking speed for Natural Readers
-speed=0
-#folder names for freeswitch (language, dialect)
-language=['nl','nl']
-
 import requests
-#headers = {'User-Agent': 'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0', 'Origin': 'https://www.naturalreaders.com', 'Accept-Encoding': 'gzip, deflate, br', 'Accept': '*/*' }
+import config
+import json
+import base64
+import sys
 
-data = raw_input("Download existing audiofiles again?")
+class GoogleTTS:
+    def __init__(self):
+        self.url          = "https://texttospeech.googleapis.com/v1/text:synthesize"
+        self.apiKey       = config.config['googleAPIkey']
+        self.voice        = {'name': None, 'languageCode': None}
+        self.httpSession  = requests.session()
+        self.audioConfig  = {'audioEncoding':    config.config['audioEncoding'], 
+                             'speakingRate':     config.config['speakingRate'],
+                             'pitch':            config.config['pitch'],
+                             'volumeGainDb':     config.config['volumeGainDb'],
+                             'sampleRateHertz':  config.config['sampleRateHertz'],
+                             'effectsProfileId': config.config['effectsProfileId']
+                            }
+    def setVoice(self, name, languageCode):
+        self.voice['name']         = name
+        self.voice['languageCode'] = languageCode
+
+    def produce(self, text=None, ssml=None):
+        if text is None and ssml is None:
+                print("No text or ssml to produce")
+                return
+
+        data = {
+                "input": {},
+                "voice": {"name":  self.voice['name'], "languageCode": self.voice['languageCode']},
+                "audioConfig": self.audioConfig
+               }
+         
+        if text is not None:
+            data['input']['text'] =  text
+        if ssml is not None:
+            data['input']['ssml'] =  ssml
+
+        headers = {"content-type": "application/json", "X-Goog-Api-Key": self.apiKey }
+
+        r = self.httpSession.post(url=self.url, json=data, headers=headers)
+        content = json.loads(r.content)
+        #print(content)
+        return base64.b64decode(content['audioContent'])
+
+reDownload = input("Download existing audiofiles again?")
+if reDownload == 'Y' or reDownload == 'y':
+    reDownload = True
+else:
+    reDownload = False
+
+tts = GoogleTTS()
+tts.setVoice(name='nl-NL-Wavenet-E', languageCode='nl-NL')
+#audio = tts.produce(text="Hallo")
+
+fileExt = "wav"
+if config.config['audioEncoding'] == 'LINEAR16':
+    fileExt = 'wav'
+elif config.config['audioEncoding'] == 'MP3':
+    fileExt = 'mp3'
+
+#with open('test.'+fileExt, 'wb') as audioFile:
+#    audioFile.write(audio)
+
+processLanguages = ['nl-nl']   #columns from csv to process
+
+with open('freeswitch_nl_translations.csv', 'r') as csvfile:
+    csvreader = csv.DictReader(csvfile, delimiter=';', quotechar='"')
+    languages = list( next(csvreader).keys() )
+    languages.remove('folder')
+    languages.remove('filename')
+    #print(languages)
+    csvfile.seek(0)
+    _ = next(csvreader)
+    for lang in languages:
+        if lang not in processLanguages:
+            print("Skipping language %s"%(lang))
+            continue
+        tts.setVoice(name=config.languages[lang]['name'], languageCode=config.languages[lang]['languageCode'])
+
+        for row in csvreader:
+            colLang, colDialect = lang.split('-')
+            targetDir = os.path.join('google', colLang, colDialect, row['folder'].strip('/') )
+            #print(targetDir)
+
+            try:
+              os.stat(targetDir)
+            except:
+              print('Creating folder %s'%(targetDir) )
+              os.makedirs(targetDir)
+
+            #import os.path
+            file_exists = os.path.isfile( os.path.join(targetDir, row['filename']+'.'+fileExt) )
+
+            if (reDownload and file_exists) or not file_exists:
+                if row[lang] is not None and row[lang] != '':
+                    audio = tts.produce(text=row[lang])
+                    with open(os.path.join(targetDir, row['filename']+'.'+fileExt), 'wb') as audioFile:
+                        audioFile.write(audio)
+            else:
+                print("skipping download: %s"%( os.path.join(targetDir, row['filename']+'.'+fileExt) ) )
+
+                for samplerate in [8000,16000,32000,48000]:
+                  targetDir2 = os.path.join('output', colLang, colDialect, config.languages[lang]['name'], row['folder'].strip('/'), str(samplerate) )
+                  try:
+                    os.stat(targetDir2)
+                  except:
+                    print('Creating folder %s'%(targetDir2) )
+                    os.makedirs(targetDir2)
+                  #print 'Converting %s/%s to %s/%s'%(targetdir,wavfile,targetdir2,wavfile)
+                  os.system( 'sox %s -r %d -c 1 -e signed-integer %s'%(os.path.join(targetDir, row['filename']+'.'+fileExt),samplerate,os.path.join(targetDir2, row['filename']+'.'+fileExt)) )
+
+                continue
 
 
-url1     = 'https://www.naturalreaders.com/online/'
-response = http_request(url=url1, headers=headers)
-
-
-get_params={'e': 'user@naturalreaders.com', 'l': '0', 'v': 'mac', 'r':voices[0]['id'], 's':speed}
-with open('freeswitch_nl_translations.csv', 'rb') as csvfile:
-  csvreader = csv.reader(csvfile, delimiter=';', quotechar='"')
-  for row in csvreader:
-    if row[2] != '':
-      for voice in voices:
-        #print row[2]
-        #get_params['t'] = row[2]
-        url = 'https://pw.naturalreaders.com/tts?%s'%(urllib.urlencode(get_params))
-        url = 'https://pw.naturalreaders.com/tts?e=user@naturalreaders.com&l=0&s=0&r=21&v=mac'
-
-        targetdir  = 'naturalreaders/%s/%s'%(voice['name'], row[0][1:] if row[0][0]=='/' else row[0])
-
-        if row[1][-4:] == '.wav':
-          targetfile = '%s.mp3'%(row[1][0:-4])
-        else:
-          targetfile = '%s.mp3'%(row[1])
-
-        try:
-          os.stat(targetdir)
-        except:
-          #print 'Creating folder %s'%(targetdir)
-          os.makedirs(targetdir)
-
-        print 'Processing %s/%s'%(targetdir,targetfile)
-
-        import os.path
-        file_exists = os.path.isfile("%s/%s"%(targetdir,targetfile) )
-
-        if (file_exists and data == 'y') or not file_exists:
-          #print 'Downloading %s'%(url)
-          postdata = '{"t": "%s" }'%(row[2])
-
-          import time
-          response = None
-          while response is None:
-            response = http_request(url=url, data=postdata, headers=headers)
-            if response is None: time.sleep(10)
-          content = get_content(response)
-          output_file = open("%s/%s"%(targetdir,targetfile),"wb")
-          output_file.write(content)
-          output_file.close()
-
-        wavfile = "%s.wav"%(targetfile[:-4])
-        #print 'Converting %s/%s to %s/%s'%(targetdir,targetfile,targetdir,wavfile)
-        os.system( 'ffmpeg -v 0 -y -i %s/%s %s/%s'%(targetdir,targetfile,targetdir,wavfile) )
-
-        for samplerate in [8000,16000,32000,48000]:
-          targetdir2  = 'output/%s/%s/%s/%s/%d'%(language[0],language[1],voice['name'], row[0][1:] if row[0][0]=='/' else row[0], samplerate)
-          try:
-            os.stat(targetdir2)
-          except:
-            print 'Creating folder %s'%(targetdir2)
-            os.makedirs(targetdir2)
-          #print 'Converting %s/%s to %s/%s'%(targetdir,wavfile,targetdir2,wavfile)
-          os.system( 'sox %s/%s -r %s -c 1 -e signed-integer %s/%s'%(targetdir,wavfile,samplerate,targetdir2,wavfile) )
-
-      print
