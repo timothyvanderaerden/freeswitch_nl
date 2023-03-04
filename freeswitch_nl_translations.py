@@ -47,6 +47,9 @@ class GoogleTTS:
 
         r = self.httpSession.post(url=self.url, json=data, headers=headers)
         content = json.loads(r.content)
+        if 'audioContent' not in content:
+          print(content)
+          sys.exit(0)
         return base64.b64decode(content['audioContent'])
 
 reDownload = None
@@ -78,7 +81,7 @@ elif config.config['audioEncoding'] == 'MP3':
 
 processLanguages = ['nl-nl']   #columns from csv to process
 
-with open('freeswitch_nl_translations.csv', 'r') as csvfile:
+with open(os.path.join(os.path.abspath( os.path.dirname( __file__ ) ), 'freeswitch_nl_translations.csv'), 'r') as csvfile:
     csvreader = csv.DictReader(csvfile, delimiter=';', quotechar='"')
     languages = list( next(csvreader).keys() )
     languages.remove('folder')
