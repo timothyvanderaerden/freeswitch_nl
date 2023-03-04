@@ -8,6 +8,7 @@ import config
 import json
 import base64
 import sys
+import getopt
 
 class GoogleTTS:
     def __init__(self):
@@ -46,14 +47,21 @@ class GoogleTTS:
 
         r = self.httpSession.post(url=self.url, json=data, headers=headers)
         content = json.loads(r.content)
-        #print(content)
         return base64.b64decode(content['audioContent'])
 
-reDownload = input("Download existing audiofiles again?")
-if reDownload == 'Y' or reDownload == 'y':
-    reDownload = True
-else:
+reDownload = None
+opts, args = getopt.getopt(sys.argv[1:],"n")
+for opt, arg in opts:
+  if opt == '-n':
+    print ('Not redownloading existing files')
     reDownload = False
+
+if reDownload is None:
+  reDownload = input("Download existing audiofiles again? [y/N] ")
+  if reDownload == 'Y' or reDownload == 'y':
+      reDownload = True
+  else:
+      reDownload = False
 
 tts = GoogleTTS()
 tts.setVoice(name='nl-NL-Wavenet-E', languageCode='nl-NL')
