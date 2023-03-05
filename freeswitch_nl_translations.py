@@ -48,6 +48,7 @@ class GoogleTTS:
         r = self.httpSession.post(url=self.url, json=data, headers=headers)
         content = json.loads(r.content)
         if 'audioContent' not in content:
+          print(headers)
           print(content)
           sys.exit(0)
         return base64.b64decode(content['audioContent'])
@@ -97,7 +98,7 @@ with open(os.path.join(os.path.abspath( os.path.dirname( __file__ ) ), 'freeswit
 
         for row in csvreader:
             colLang, colDialect = lang.split('-')
-            targetDir = os.path.join('google', colLang, colDialect, row['folder'].strip('/') )
+            targetDir = os.path.join('google', colLang, colDialect, config.languages[lang]['name'], row['folder'].strip('/') )
             #print(targetDir)
 
             try:
