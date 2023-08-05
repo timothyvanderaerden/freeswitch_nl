@@ -37,7 +37,7 @@ class GoogleTTS:
                 "voice": {"name":  self.voice['name'], "languageCode": self.voice['languageCode']},
                 "audioConfig": self.audioConfig
                }
-         
+
         if text is not None:
             data['input']['text'] =  text
         if ssml is not None:
@@ -98,7 +98,7 @@ with open(os.path.join(os.path.abspath( os.path.dirname( __file__ ) ), 'freeswit
 
         for row in csvreader:
             colLang, colDialect = lang.split('-')
-            targetDir = os.path.join('google', colLang, colDialect, config.languages[lang]['name'], row['folder'].strip('/') )
+            targetDir = os.path.join(os.path.abspath( os.path.dirname( __file__ ) ), 'google', colLang, colDialect, config.languages[lang]['name'], row['folder'].strip('/') )
             #print(targetDir)
 
             try:
@@ -119,7 +119,7 @@ with open(os.path.join(os.path.abspath( os.path.dirname( __file__ ) ), 'freeswit
                 print("skipping download: %s"%( os.path.join(targetDir, row['filename']+'.'+fileExt) ) )
 
                 for samplerate in [8000,16000,32000,48000]:
-                  targetDir2 = os.path.join('output', colLang, colDialect, config.languages[lang]['name'], row['folder'].strip('/'), str(samplerate) )
+                  targetDir2 = os.path.join(os.path.abspath( os.path.dirname( __file__ ) ), 'output', colLang, colDialect, config.languages[lang]['name'], row['folder'].strip('/'), str(samplerate) )
                   try:
                     os.stat(targetDir2)
                   except:
