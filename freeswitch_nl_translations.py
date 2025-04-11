@@ -81,7 +81,7 @@ elif config.config['audioEncoding'] == 'MP3':
 #with open('test.'+fileExt, 'wb') as audioFile:
 #    audioFile.write(audio)
 
-processLanguages = ['nl-nl']   #columns from csv to process
+processLanguages = ['nl-nl', 'de-de', 'pt-pt']   #columns from csv to process
 
 with open(os.path.join(os.path.abspath( os.path.dirname( __file__ ) ), 'freeswitch_nl_translations.csv'), 'r') as csvfile:
     csvreader = csv.DictReader(csvfile, delimiter=';', quotechar='"')
