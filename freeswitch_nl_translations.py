@@ -14,6 +14,7 @@ class GoogleTTS:
     def __init__(self):
         self.url          = "https://texttospeech.googleapis.com/v1/text:synthesize"
         self.apiKey       = config.config['googleAPIkey']
+        self.project      = config.config['googleProject']
         self.voice        = {'name': None, 'languageCode': None}
         self.httpSession  = requests.session()
         self.audioConfig  = {'audioEncoding':    config.config['audioEncoding'], 
@@ -43,7 +44,7 @@ class GoogleTTS:
         if ssml is not None:
             data['input']['ssml'] =  ssml
 
-        headers = {"content-type": "application/json", "X-Goog-Api-Key": self.apiKey }
+        headers = {"content-type": "application/json", "Authorization": "Bearer " + self.apiKey, "X-Goog-User-Project": self.project }
 
         r = self.httpSession.post(url=self.url, json=data, headers=headers)
         content = json.loads(r.content)
